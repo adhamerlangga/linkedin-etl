@@ -36,4 +36,8 @@ password = os.getenv("LINKEDIN_PASSWORD")
 username_field.send_keys(username)
 password_field.send_keys(password)
 
+# Find and click login button
+login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+login_button.click()
+
 time.sleep(15)
