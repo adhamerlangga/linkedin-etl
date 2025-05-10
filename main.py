@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 
 from bs4 import BeautifulSoup
@@ -49,15 +50,21 @@ WebDriverWait(driver, 15).until(
 driver.get("https://www.linkedin.com/jobs/")
 
 # Wait until the search input element is visible
-try:
-    search_input = WebDriverWait(driver, 20).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, "input.jobs-search-box__text-input.jobs-search-box__keyboard-text-input.jobs-search-box__ghost-text-input"))
-    )
-    print("Search input is visible!")
-    
-    # Now you can interact with the search bar (e.g., send keys)
-    search_input.send_keys("Data Engineer")
-except TimeoutException:
-    print("Search input not found within the time limit.")
-    # You can also take a screenshot to help debug:
-    driver.save_screenshot("error_screenshot.png")
+job_role_search_input = WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "input.jobs-search-global-typeahead__input"))
+)
+
+driver.execute_script("arguments[0].scrollIntoView(true);", job_role_search_input)
+job_role_search_input.click()
+job_role_search_input.clear()
+job_role_search_input.send_keys("Data Engineer")
+
+location_search_input = WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "input[autocomplete='address-level2']"))
+)
+
+location_search_input.click()
+location_search_input.clear()
+location_search_input.send_keys("Jakarta")
+
+time.sleep(15)
