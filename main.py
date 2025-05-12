@@ -49,22 +49,24 @@ WebDriverWait(driver, 15).until(
 
 driver.get("https://www.linkedin.com/jobs/")
 
-# Wait until the search input element is visible
-job_role_search_input = WebDriverWait(driver, 20).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, "input.jobs-search-global-typeahead__input"))
-)
 
-driver.execute_script("arguments[0].scrollIntoView(true);", job_role_search_input)
-job_role_search_input.click()
-job_role_search_input.clear()
-job_role_search_input.send_keys("Data Engineer")
 
 location_search_input = WebDriverWait(driver, 20).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[autocomplete='address-level2']"))
 )
-
+driver.execute_script("arguments[0].scrollIntoView(true);", location_search_input)
 location_search_input.click()
 location_search_input.clear()
 location_search_input.send_keys("Jakarta")
 
-time.sleep(15)
+# Wait until the search input element is visible
+job_role_search_input = WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "input.jobs-search-global-typeahead__input"))
+)
+job_role_search_input.click()
+job_role_search_input.clear()
+job_role_search_input.send_keys("Data Engineer")
+
+job_role_search_input.send_keys(Keys.RETURN)
+
+time.sleep(7)
