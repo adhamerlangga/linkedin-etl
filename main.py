@@ -74,11 +74,20 @@ date_posted_filter_button = WebDriverWait(driver, 10).until(
 )
 date_posted_filter_button.click()
 
-label = WebDriverWait(driver, 10).until(
+label = WebDriverWait(driver, 15).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "label[for='timePostedRange-r86400']"))
 )
 label.click()
 
+try:
+    show_results_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH,"//button[starts-with(@aria-label, 'Apply current filter to show')]"))
+    )
+    show_results_button.click()
+    print("✅ Clicked 'Show results'")
 
+except Exception as e:
+    driver.save_screenshot("debug_show_results_aria_error.png")
+    print("❌ Failed to click 'Show results' button:", e)
 
 time.sleep(7)
