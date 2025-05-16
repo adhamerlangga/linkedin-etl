@@ -69,4 +69,16 @@ job_role_search_input.send_keys("Data Engineer")
 
 job_role_search_input.send_keys(Keys.RETURN)
 
+date_posted_filter_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.ID, "searchFilter_timePostedRange"))
+)
+date_posted_filter_button.click()
+
+label = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "label[for='timePostedRange-r86400']"))
+)
+label.click()
+
+
+
 time.sleep(7)
