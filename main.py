@@ -13,6 +13,8 @@ import time
 
 import os
 
+
+
 # Chrome options
 options = Options()
 # options.add_argument("--headless") # Run without GUI
@@ -24,8 +26,8 @@ driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())
 url = "https://www.linkedin.com/jobs/"
 driver.get(url)
 
-WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, 'session_key')))
-WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, 'session_password')))
+WebDriverWait(driver,30).until(EC.presence_of_element_located((By.ID, 'session_key')))
+WebDriverWait(driver,30).until(EC.presence_of_element_located((By.ID, 'session_password')))
 
 username_field = driver.find_element(By.ID, "session_key")
 password_field = driver.find_element(By.ID, "session_password")
@@ -43,7 +45,7 @@ login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
 login_button.click()
 
 # Wait for profile icon or "Jobs" tab
-WebDriverWait(driver, 15).until(
+WebDriverWait(driver, 30).until(
     EC.presence_of_element_located((By.XPATH, "//a[contains(@href, '/jobs/')]"))
 )
 
@@ -51,7 +53,7 @@ driver.get("https://www.linkedin.com/jobs/")
 
 
 
-location_search_input = WebDriverWait(driver, 20).until(
+location_search_input = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[autocomplete='address-level2']"))
 )
 driver.execute_script("arguments[0].scrollIntoView(true);", location_search_input)
@@ -60,7 +62,7 @@ location_search_input.clear()
 location_search_input.send_keys("Jakarta")
 
 # Wait until the search input element is visible
-job_role_search_input = WebDriverWait(driver, 20).until(
+job_role_search_input = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input.jobs-search-global-typeahead__input"))
 )
 job_role_search_input.click()
@@ -69,7 +71,7 @@ job_role_search_input.send_keys("Data Engineer")
 
 job_role_search_input.send_keys(Keys.RETURN)
 
-date_posted_filter_button = WebDriverWait(driver, 10).until(
+date_posted_filter_button = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.ID, "searchFilter_timePostedRange"))
 )
 date_posted_filter_button.click()
@@ -90,4 +92,27 @@ except Exception as e:
     driver.save_screenshot("debug_show_results_aria_error.png")
     print("❌ Failed to click 'Show results' button:", e)
 
-time.sleep(7)
+last_height = driver.execute_script("return document.body.scrollHeight")
+
+while True:
+    # Scroll down a bit
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(2)
+
+    try:
+        # Wait for pagination bar to load
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "artdeco-pagination__pages"))
+        )
+        print("✅ Pagination loaded")
+        break
+    except:
+        print("⏳ Still waiting for pagination...")
+    
+    # Checker if already hit the bottom
+    new_height = driver.execute_script("return document.body.scrollHeight")
+    if new_height == last_height:
+        print("⚠️ Reached bottom but pagination not found.")
+        break
+    last_height == new_height
+time.sleep(20)
